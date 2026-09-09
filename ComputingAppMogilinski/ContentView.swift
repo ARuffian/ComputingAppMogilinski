@@ -11,7 +11,10 @@ struct ContentView: View {
     @State var stateChosen: String = "What State Are You in?"
     @State var givenTax: Double = 0.0
     @State var givenOrder: Double = 0.0
+    @State var storer = 0.0
+    @State var itemPrice = ""
     @FocusState var isFocused: Bool
+    @State var showAlert = false
     
     
     var body: some View {
@@ -242,12 +245,58 @@ struct ContentView: View {
             .foregroundStyle(.white)
             .clipShape(RoundedRectangle(cornerRadius: 25))
             .padding(.bottom, 50)
+            ZStack{
+                RoundedRectangle(cornerRadius: 45)
+                    .foregroundStyle(.blue)
+                    .frame(width: 250, height: 200)
                 
+                    
+                VStack{
+                    Text("Insert Price of an Item")
+                        .fontDesign(.serif)
+                        .padding(.bottom)
+                    TextField("Item Price", text: $itemPrice)
+                        
+                        .keyboardType(.numberPad)
+                        .focused($isFocused)
+                        .padding(.leading, 146)
+                    Button("Add Item"){
+                        
+                        
+                        guard let b = Double(itemPrice) else{
+                            showAlert.toggle()
+                            return
+                        }
+                        givenOrder += b
+                        itemPrice = ""
+                        print(givenOrder)
+                    }
+                    .foregroundStyle(.cyan)
+                    .padding(.bottom)
+                    Button("Find my Tax"){
+                        calTax()
+                    }
+                    .foregroundStyle(.cyan)
+                    .padding(.bottom, 10)
+                    
+                    Button("Reset Cart"){
+                        givenOrder = 0.0
+                    }
+                    .foregroundStyle(.red)
+                }
+            }
             
         }
+        .alert("Use numbers instead of letters", isPresented: $showAlert, actions: {
+            // code to be done after they press the button
+            Button("Ok"){
+                itemPrice = ""
+            }
+        })
         .padding()
     }
     func calTax(){
+        storer = givenOrder + givenTax*givenOrder
         
     }
 }
